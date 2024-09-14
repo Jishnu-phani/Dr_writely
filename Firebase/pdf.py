@@ -32,7 +32,7 @@ def pdf_conv(text):
             pdf.multi_cell(0, 9, txt=line.strip())
 
 # Output the PDF to a file
-    pdf.output('Dr_writely/Firebase/gg.pdf')
+    pdf.output('C:/Users/gteja/Documents/Python/Dr-Writely-Git/Dr_writely/Firebase/gg.pdf')
 # pdf.add_page()
 # pdf.set_font("Arial",size=15)
 # pdf.cell(200, 10, txt = text,
