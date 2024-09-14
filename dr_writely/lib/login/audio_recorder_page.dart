@@ -231,6 +231,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Start/Stop Recording Button
                   SizedBox(
                     width: double.infinity,
                     height: 56, // Match height of login button
@@ -246,21 +247,40 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
                       ),
                       child: Text(
                         isRecording ? 'Stop Recording' : 'Start Recording',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFF9F9F9), // Updated text color
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Space between buttons
+                  const SizedBox(height: 20), // Space between buttons
+
+                  // Play Audio Button
                   SizedBox(
                     width: double.infinity,
                     height: 56, // Match height of login button
                     child: ElevatedButton(
                       onPressed: isPlaying ? null : playAudio,
-                      child: const Text('Play Audio'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xFF1C110A), // Same style as start recording button
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
+                      child: const Text(
+                        'Play Audio',
+                        style: TextStyle(
+                          color: Color(
+                              0xFFF9F9F9), // Same text color as start recording button
+                        ),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 20), // Space between buttons
+
+                  // Send to Server Button
                   SizedBox(
                     width: double.infinity,
                     height: 56, // Match height of login button
@@ -269,9 +289,26 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
                               _nameController.text.isNotEmpty)
                           ? sendFile
                           : null,
-                      child: const Text('Send to Server'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xFF1C110A), // Same style as start recording button
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
+                      child: const Text(
+                        'Send to Server',
+                        style: TextStyle(
+                          color: Color(
+                              0xFFF9F9F9), // Same text color as start recording button
+                        ),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 20), // Space between buttons
+
+                  // Delete Recording Button (Stays with red color)
                   SizedBox(
                     width: double.infinity,
                     height: 56, // Match height of login button
