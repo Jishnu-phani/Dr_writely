@@ -28,8 +28,10 @@ class AudioRecorderPage extends StatefulWidget {
 }
 
 class _AudioRecorderPageState extends State<AudioRecorderPage> {
-  FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+  FlutterSoundRecorder? _recorder;
+  FlutterSoundPlayer? _player;
   bool isRecording = false;
+  bool isPlaying = false;
   String recordedFilePath = '';
 
   @override
@@ -40,45 +42,54 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
 
   @override
   void dispose() {
-    _recorder.closeRecorder();
+    _recorder?.closeRecorder();
+    _player?.closePlayer();
     super.dispose();
   }
 
   Future<void> initRecorder() async {
-    // Check if the microphone permission is already granted
-    var status = await Permission.microphone.status;
-    if (status != PermissionStatus.granted) {
-      // Request the microphone permission
-      status = await Permission.microphone.request();
-      if (status != PermissionStatus.granted) {
-        // Handle the case where the permission is not granted
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Microphone permission not granted')),
-        );
-        return;
-      }
-    }
+    // Check for microphone permission
+    if (await Permission.microphone.request().isGranted) {
+      _recorder = FlutterSoundRecorder();
+      _player = FlutterSoundPlayer();
 
-    // Open the recorder if permission is granted
-    await _recorder.openRecorder();
+      await _recorder!.openRecorder();
+      await _player!.openPlayer();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Microphone permission not granted')),
+      );
+    }
   }
 
   Future<void> startRecording() async {
-    recordedFilePath = '${Directory.systemTemp.path}/audio_record.wav';
-    await _recorder.startRecorder(
-      toFile: recordedFilePath,
-      codec: Codec.pcm16WAV,
-    );
-    setState(() {
-      isRecording = true;
-    });
+    try {
+      recordedFilePath = '${Directory.systemTemp.path}/audio_record.wav';
+      await _recorder!.startRecorder(
+        toFile: recordedFilePath,
+        codec: Codec.pcm16WAV,
+      );
+      setState(() {
+        isRecording = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error starting recording: $e')),
+      );
+    }
   }
 
   Future<void> stopRecording() async {
-    await _recorder.stopRecorder();
-    setState(() {
-      isRecording = false;
-    });
+    try {
+      await _recorder!.stopRecorder();
+      setState(() {
+        isRecording = false;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error stopping recording: $e')),
+      );
+    }
   }
 
   Future<void> sendFile() async {
@@ -94,13 +105,44 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
       ),
     );
 
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('File uploaded successfully')));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('File upload failed')));
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File uploaded successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File upload failed')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File upload failed: $e')),
+      );
+    }
+  }
+
+  Future<void> playAudio() async {
+    if (recordedFilePath.isNotEmpty) {
+      try {
+        await _player!.startPlayer(
+          fromURI: recordedFilePath,
+          codec: Codec.pcm16WAV,
+          whenFinished: () {
+            setState(() {
+              isPlaying = false;
+            });
+          },
+        );
+        setState(() {
+          isPlaying = true;
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error playing audio: $e')),
+        );
+      }
     }
   }
 
@@ -115,12 +157,12 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              onPressed: isRecording ? null : startRecording,
-              child: Text('Start Recording'),
+              onPressed: isRecording ? stopRecording : startRecording,
+              child: Text(isRecording ? 'Stop Recording' : 'Start Recording'),
             ),
             ElevatedButton(
-              onPressed: isRecording ? stopRecording : null,
-              child: Text('Stop Recording'),
+              onPressed: isPlaying ? null : playAudio,
+              child: Text('Play Audio'),
             ),
             ElevatedButton(
               onPressed: recordedFilePath.isNotEmpty ? sendFile : null,
