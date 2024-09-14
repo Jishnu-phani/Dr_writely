@@ -18,19 +18,23 @@ class _LoginPageState extends State<LoginPage> {
         child: Icon(
           Icons.account_circle,
           size: 100.0,
-          // color: Colors.grey,
+          color: Color(0xFF1C110A), // Change the color of the logo to #1C110A
         ),
       ),
     );
 
-    final email = TextFormField(
-      keyboardType: TextInputType.emailAddress,
+    final name = TextFormField(
+      keyboardType: TextInputType.name,
       autofocus: false,
       decoration: InputDecoration(
-        hintText: 'Email',
-        hintStyle: const TextStyle(color: Color.fromARGB(104, 158, 158, 158), ),
+        hintText: 'Name',
+        hintStyle: const TextStyle(
+          color: Color.fromARGB(104, 158, 158, 158),
+        ),
         contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0), // Squared input box
+        ),
       ),
     );
 
@@ -38,50 +42,83 @@ class _LoginPageState extends State<LoginPage> {
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
-        hintStyle: const TextStyle(color: Color.fromARGB(104, 158, 158, 158), ),
         hintText: 'Password',
+        hintStyle: const TextStyle(
+          color: Color.fromARGB(104, 158, 158, 158),
+        ),
         contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0), // Squared input box
+        ),
       ),
     );
 
     final loginButton = Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: SizedBox(
+        width: double.infinity, // Make button as wide as input fields
+        height: 56, // Match height of input fields
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(RecordView.tag);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                const Color(0xFF1C110A), // Set background color to #1C110A
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0), // Squared corners
+            ),
+          ),
+          child: const Text(
+            'Log In',
+            style: TextStyle(color: Colors.white), // White text for contrast
+          ),
+        ),
+      ),
+    );
+
+    final registerAsDoctor = SizedBox(
+      height: 56, // Match height of login button
       child: ElevatedButton(
-        // style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
         onPressed: () {
           Navigator.of(context).pushNamed(RecordView.tag);
         },
-        child: const Text('Log In', style: TextStyle(color: Colors.black)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              const Color(0xFF5AA9E6), // Set background color to #5AA9E6
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0), // Squared corners
+          ),
         ),
+        child: const Text(
+          'Register as Doctor',
+          style: TextStyle(color: Colors.white), // White text for contrast
+        ),
+      ),
     );
 
-    final registerAsDoctor = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    final registerAsUser = SizedBox(
+      height: 56, // Match height of login button
       child: ElevatedButton(
-        // style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
         onPressed: () {
           Navigator.of(context).pushNamed(RecordView.tag);
         },
-        child: const Text('Register as doctor', style: TextStyle(color: Colors.black)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              const Color(0xFF5AA9E6), // Set background color to #5AA9E6
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0), // Squared corners
+          ),
         ),
-    );
-
-    final registerAsUser = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        // style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-        onPressed: () {
-          Navigator.of(context).pushNamed(RecordView.tag);
-        },
-        child: const Text('Register as user', style: TextStyle(color: Colors.black)),
+        child: const Text(
+          'Register as Patient',
+          style: TextStyle(color: Colors.white), // White text for contrast
         ),
+      ),
     );
-
-    
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF9F9F9), // Light gray background
       body: Center(
         child: ListView(
           shrinkWrap: true,
@@ -89,17 +126,29 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             logo,
             const SizedBox(height: 48.0),
-            email,
+            name, // Name field
             const SizedBox(height: 8.0),
-            password,
+            password, // Password field
             const SizedBox(height: 24.0),
-            loginButton,
+            loginButton, // Login Button
             const SizedBox(height: 8.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                registerAsDoctor,
-                registerAsUser,
+              children: <Widget>[
+                // Two buttons in a row, each taking up 50% of the width
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        right: 8.0), // Add space between buttons
+                    child: registerAsDoctor,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 8.0), // Add space between buttons
+                    child: registerAsUser,
+                  ),
+                ),
               ],
             ),
           ],
