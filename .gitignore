@@ -1,0 +1,17 @@
+# Ignore model files
+sttmodel/model/pytorch_model.bin
+
+# Ignore audio files
+sttmodel/*.mp3
+
+# Ignore system files
+.DS_Store
+
+# Ignore Jupyter notebook checkpoints
+**/.ipynb_checkpoints
+
+# Ignore the entire model directory (if you don't want to track any files in it)
+sttmodel/model/
+
+# Ignore virtual environment folder (if applicable)
+venv/
