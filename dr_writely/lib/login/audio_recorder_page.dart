@@ -160,6 +160,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9), // Gray background color
       appBar: AppBar(
         title: Text('Audio Recorder'),
       ),
@@ -168,7 +169,8 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 40.0),
+              padding:
+                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 40.0),
               child: TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -189,45 +191,96 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
                 children: [
                   SizedBox(
                     width: double.infinity,
+                    height: 56, // Match height of login button
                     child: ElevatedButton(
                       onPressed: isRecording ? stopRecording : startRecording,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xFF1C110A), // Same color as login button
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
                       child: Text(
-                          isRecording ? 'Stop Recording' : 'Start Recording'),
+                        isRecording ? 'Stop Recording' : 'Start Recording',
+                        style: TextStyle(
+                          color: Color(0xFFF9F9F9), // Updated text color
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: 20), // Space between buttons
                   SizedBox(
                     width: double.infinity,
+                    height: 56, // Match height of login button
                     child: ElevatedButton(
                       onPressed: isPlaying ? null : playAudio,
-                      child: Text('Play Audio'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                            0xFF1C110A), // Same color as login button
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
+                      child: Text(
+                        'Play Audio',
+                        style: TextStyle(
+                          color: Color(0xFFF9F9F9), // Updated text color
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: 20), // Space between buttons
                   SizedBox(
                     width: double.infinity,
+                    height: 56, // Match height of login button
                     child: ElevatedButton(
                       onPressed: () {
                         if (recordedFilePath.isNotEmpty) {
                           sendFile();
                         }
                       },
-                      child: Text('Send to Server'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1C110A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
+                      child: Text(
+                        'Send to Server',
+                        style: TextStyle(
+                          color: Color(0xFFF9F9F9), // Updated text color
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: 20), // Space between buttons
                   SizedBox(
                     width: double.infinity,
+                    height: 56, // Match height of login button
                     child: ElevatedButton(
-                      onPressed: recordedFilePath.isNotEmpty ? deleteFile : null,
+                      onPressed:
+                          recordedFilePath.isNotEmpty ? deleteFile : null,
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red), // Red button for delete
+                        backgroundColor: Colors.red, // Red button for delete
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8.0), // Squared corners
+                        ),
+                      ),
                       child: const Row(
                         mainAxisSize: MainAxisSize
                             .min, // Adjust the size of the Row to fit its children
                         children: [
-                          Icon(Icons.delete),
+                          Icon(Icons.delete, color: Colors.white),
                           SizedBox(
                               width:
                                   8), // Add some space between the icon and the text
-                          Text('Delete Recording'),
+                          Text('Delete Recording',
+                              style: TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
