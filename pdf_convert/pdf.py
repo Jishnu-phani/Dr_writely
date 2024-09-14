@@ -20,15 +20,15 @@ pdf.set_font("Arial", size=12)
 for line in lines:
     if ':' in line:
         head, content = line.split(':', 1)
-        pdf.set_font("Arial", 'B', size=14)
-        pdf.cell(0, 10, txt=head + ':', ln=True)
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Arial", 'BU', size=13)
+        pdf.cell(0, 8, txt=head + ':', ln=True)
+        pdf.set_font("Arial", size=10)
 
         # Use multi_cell for text wrapping
-        pdf.multi_cell(0, 10, txt=content.strip())
+        pdf.multi_cell(0, 9, txt=content.strip())
     else:
         # Handle lines without a colon
-        pdf.multi_cell(0, 10, txt=line.strip())
+        pdf.multi_cell(0, 9, txt=line.strip())
 
 # Output the PDF to a file
 pdf.output('gg.pdf')
