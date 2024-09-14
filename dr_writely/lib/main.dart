@@ -146,6 +146,26 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
     }
   }
 
+  Future<void> deleteFile() async {
+    try {
+      final file = File(recordedFilePath);
+      if (await file.exists()) {
+        await file.delete();
+        setState(() {
+          recordedFilePath = '';
+          isPlaying = false; // Stop any ongoing playback
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File deleted successfully')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting file: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,13 +188,19 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
               onPressed: recordedFilePath.isNotEmpty ? sendFile : null,
               child: Text('Send to Server'),
             ),
+            ElevatedButton(
+              onPressed: recordedFilePath.isNotEmpty ? deleteFile : null,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red), // Red button for delete
+              child: Text('Delete Recording'),
+            ),
             SizedBox(height: 20),
             if (isRecording) ...[
               CircularProgressIndicator(),
               SizedBox(height: 10),
               Text('Recording in progress...'),
             ] else if (recordedFilePath.isNotEmpty) ...[
-              Text('Recording complete. Ready to send.'),
+              Text('Recording complete. Ready to send or delete.'),
             ],
           ],
         ),
