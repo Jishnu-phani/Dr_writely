@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,8 +21,10 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   String recordedFilePath = '';
 
   // Add a TextEditingController to manage the input for the user's name
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   String userName = '';
+  var audioSent = false;
+  var patientNameSent = false;
 
   @override
   void initState() {
@@ -47,7 +50,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
       await _player!.openPlayer();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Microphone permission not granted')),
+        const SnackBar(content: Text('Microphone permission not granted')),
       );
     }
   }
@@ -83,7 +86,12 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   }
 
   Future<void> sendFile() async {
-    if (recordedFilePath.isEmpty) return;
+    if (recordedFilePath.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No file to send')),
+      );
+      return;
+    }
 
     var uri = Uri.parse('http://172.16.128.130:5000/upload');
     var request = http.MultipartRequest('POST', uri);
@@ -98,18 +106,52 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
     try {
       var response = await request.send();
       if (response.statusCode == 200) {
+        audioSent = true;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File uploaded successfully')),
+          const SnackBar(content: Text('File uploaded successfully')),
         );
-        Navigator.of(context).pushNamed(RecordView.tag);
+        await sendPatientName(); // Send patient name after file upload
+        if (patientNameSent && audioSent) {
+          Navigator.of(context).pushNamed(RecordView.tag);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File upload failed')),
+          const SnackBar(content: Text('File upload failed')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('File upload failed: $e')),
+      );
+    }
+  }
+
+  Future<void> sendPatientName() async {
+    var uri = Uri.parse('http://172.16.128.130:5000/patient');
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({'patient_name': _nameController.text});
+
+    try {
+      if (_nameController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a patient name')),
+        );
+        return;
+      }
+      final response = await http.post(uri, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        patientNameSent = true;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Patient name sent successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send patient name')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
       );
     }
   }
@@ -147,7 +189,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
           isPlaying = false; // Stop any ongoing playback
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File deleted successfully')),
+          const SnackBar(content: Text('File deleted successfully')),
         );
       }
     } catch (e) {
@@ -161,7 +203,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Audio Recorder'),
+        title: const Text('Audio Recorder'),
       ),
       body: Center(
         child: Column(
@@ -171,7 +213,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 40.0),
               child: TextField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter patient name',
                   border: OutlineInputBorder(),
                 ),
@@ -199,18 +241,14 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: isPlaying ? null : playAudio,
-                      child: Text('Play Audio'),
+                      child: const Text('Play Audio'),
                     ),
                   ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (recordedFilePath.isNotEmpty) {
-                          sendFile();
-                        }
-                      },
-                      child: Text('Send to Server'),
+                      onPressed: (recordedFilePath.isNotEmpty && _nameController.text.isNotEmpty) ? sendFile : null,
+                      child: const Text('Send to Server'),
                     ),
                   ),
                   SizedBox(
@@ -235,13 +273,13 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (isRecording) ...[
-              CircularProgressIndicator(),
-              SizedBox(height: 10),
-              Text('Recording in progress...'),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 10),
+              const Text('Recording in progress...'),
             ] else if (recordedFilePath.isNotEmpty) ...[
-              Text('Recording complete. Ready to send or delete.'),
+              const Text('Recording complete. Ready to send or delete.'),
             ],
           ],
         ),
