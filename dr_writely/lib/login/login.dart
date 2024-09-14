@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dr_writely/login/record_view.dart';
+import 'package:dr_writely/login/patient_view.dart'; // New PatientView
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -18,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Icon(
           Icons.account_circle,
           size: 100.0,
-          color: Color(0xFF1C110A), // Change the color of the logo to #1C110A
+          color: Color(0xFF4A90E2), // Lighter blue for better contrast
         ),
       ),
     );
@@ -29,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
         hintText: 'Name',
         hintStyle: const TextStyle(
-          color: Color.fromARGB(104, 158, 158, 158),
+          color: Color(0xFFB0BEC5), // Softer gray for placeholder text
         ),
         contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: InputDecoration(
         hintText: 'Password',
         hintStyle: const TextStyle(
-          color: Color.fromARGB(104, 158, 158, 158),
+          color: Color(0xFFB0BEC5), // Softer gray for placeholder text
         ),
         contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(
@@ -64,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor:
-                const Color(0xFF1C110A), // Set background color to #1C110A
+                const Color(0xFF4A90E2), // Updated to a calming blue
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0), // Squared corners
             ),
@@ -84,8 +85,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.of(context).pushNamed(RecordView.tag);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              const Color(0xFF5AA9E6), // Set background color to #5AA9E6
+          backgroundColor: const Color(0xFF007AFF), // Strong blue accent
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0), // Squared corners
           ),
@@ -101,11 +101,10 @@ class _LoginPageState extends State<LoginPage> {
       height: 56, // Match height of login button
       child: ElevatedButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(RecordView.tag);
+          Navigator.of(context).pushNamed(PatientView.tag);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              const Color(0xFF5AA9E6), // Set background color to #5AA9E6
+          backgroundColor: const Color(0xFF007AFF), // Strong blue accent
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0), // Squared corners
           ),
@@ -118,7 +117,8 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Light gray background
+      backgroundColor:
+          const Color(0xFF1A1A1A), // Darker background for better contrast
       body: Center(
         child: ListView(
           shrinkWrap: true,

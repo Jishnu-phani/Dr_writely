@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dr_writely/login/record_view.dart';
 import 'package:dr_writely/login/login.dart';
 import 'package:dr_writely/login/audio_recorder_page.dart';
+import 'package:dr_writely/login/patient_view.dart'; // Import the PatientView
 
 void main() => runApp(MyApp());
 
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
     LoginPage.tag: (context) => LoginPage(),
     RecordView.tag: (context) => RecordView(),
     AudioRecorderPage.tag: (context) => AudioRecorderPage(),
+    PatientView.tag: (context) => const PatientView(), // Add PatientView route
   };
 
   @override
@@ -18,11 +20,10 @@ class MyApp extends StatelessWidget {
       title: 'Dr Writely',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
       home: LoginPage(),
-      routes: routes,
+      routes: routes, // Pass the routes
     );
   }
 }

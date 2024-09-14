@@ -20,7 +20,6 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   bool isPlaying = false;
   String recordedFilePath = '';
 
-  // Add a TextEditingController to manage the input for the user's name
   final TextEditingController _nameController = TextEditingController();
   String userName = '';
   var audioSent = false;
@@ -41,7 +40,6 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   }
 
   Future<void> initRecorder() async {
-    // Check for microphone permission
     if (await Permission.microphone.request().isGranted) {
       _recorder = FlutterSoundRecorder();
       _player = FlutterSoundPlayer();
@@ -186,7 +184,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
         await file.delete();
         setState(() {
           recordedFilePath = '';
-          isPlaying = false; // Stop any ongoing playback
+          isPlaying = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File deleted successfully')),
@@ -202,151 +200,132 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Gray background color
+      backgroundColor: const Color(0xFF1A1A1A), // Match RecordView background
       appBar: AppBar(
-        title: const Text('Audio Recorder'),
+        title: const Text(
+          'Audio Recorder',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF1C110A), // Match RecordView app bar
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Text Field for Patient Name Input
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 40.0),
+              padding: const EdgeInsets.only(bottom: 30.0),
               child: TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: 'Enter patient name',
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor:
+                      const Color(0xFF1C110A), // Match RecordView input field
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Colors.blue,
+                      width: 2.0,
+                    ),
+                  ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    userName = value;
-                  });
-                },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 50.0, right: 50.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Start/Stop Recording Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56, // Match height of login button
-                    child: ElevatedButton(
-                      onPressed: isRecording ? stopRecording : startRecording,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                            0xFF1C110A), // Same color as login button
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8.0), // Squared corners
-                        ),
-                      ),
-                      child: Text(
-                        isRecording ? 'Stop Recording' : 'Start Recording',
-                        style: const TextStyle(
-                          color: Color(0xFFF9F9F9), // Updated text color
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20), // Space between buttons
 
-                  // Play Audio Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56, // Match height of login button
-                    child: ElevatedButton(
-                      onPressed: isPlaying ? null : playAudio,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                            0xFF1C110A), // Same style as start recording button
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8.0), // Squared corners
-                        ),
-                      ),
-                      child: const Text(
-                        'Play Audio',
-                        style: TextStyle(
-                          color: Color(
-                              0xFFF9F9F9), // Same text color as start recording button
-                        ),
-                      ),
-                    ),
+            // Record/Stop Button
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: isRecording ? stopRecording : startRecording,
+                icon: Icon(
+                  isRecording ? Icons.stop : Icons.mic,
+                  size: 36.0,
+                  color: const Color(0xFFF9F9F9),
+                ),
+                label: Text(
+                  isRecording ? 'Stop Recording' : 'Start Recording',
+                  style:
+                      const TextStyle(fontSize: 18, color: Color(0xFFF9F9F9)),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      isRecording ? Colors.red : const Color(0xFF1C110A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 20), // Space between buttons
-
-                  // Send to Server Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56, // Match height of login button
-                    child: ElevatedButton(
-                      onPressed: (recordedFilePath.isNotEmpty &&
-                              _nameController.text.isNotEmpty)
-                          ? sendFile
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                            0xFF1C110A), // Same style as start recording button
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8.0), // Squared corners
-                        ),
-                      ),
-                      child: const Text(
-                        'Send to Server',
-                        style: TextStyle(
-                          color: Color(
-                              0xFFF9F9F9), // Same text color as start recording button
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20), // Space between buttons
-
-                  // Delete Recording Button (Stays with red color)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56, // Match height of login button
-                    child: ElevatedButton(
-                      onPressed:
-                          recordedFilePath.isNotEmpty ? deleteFile : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Red button for delete
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8.0), // Squared corners
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize
-                            .min, // Adjust the size of the Row to fit its children
-                        children: [
-                          Icon(Icons.delete, color: Colors.white),
-                          SizedBox(
-                              width:
-                                  8), // Add some space between the icon and the text
-                          Text('Delete Recording',
-                              style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            if (isRecording) ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 10),
-              const Text('Recording in progress...'),
-            ] else if (recordedFilePath.isNotEmpty) ...[
-              const Text('Recording complete. Ready to send or delete.'),
-            ],
+
+            // Play Audio Button
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed:
+                    isPlaying || recordedFilePath.isEmpty ? null : playAudio,
+                icon:
+                    const Icon(Icons.play_arrow, size: 28, color: Colors.white),
+                label: const Text(
+                  'Play Audio',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1C110A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Send File Button
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: recordedFilePath.isNotEmpty ? sendFile : null,
+                icon: const Icon(Icons.upload, size: 28, color: Colors.white),
+                label: const Text(
+                  'Send Audio',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1C110A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Delete File Button
+            SizedBox(
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: recordedFilePath.isNotEmpty ? deleteFile : null,
+                icon: const Icon(Icons.delete, size: 28, color: Colors.white),
+                label: const Text(
+                  'Delete File',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1C110A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

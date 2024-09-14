@@ -48,9 +48,17 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Same background color
+      backgroundColor:
+          const Color(0xFF1A1A1A), // Darker gray background for consistency
       appBar: AppBar(
-        title: const Text('Patient Details'),
+        title: const Text(
+          'Patient Details',
+          style: TextStyle(
+            color: Colors.white, // White text for contrast
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF1C110A), // Dark background color
       ),
       body: Stack(
         children: [
@@ -77,6 +85,7 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                     ),
+                    color: const Color(0xFF1C110A), // Darker card background
                     child: AnimatedSize(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -91,39 +100,41 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Patient Name:',
                                       style: TextStyle(
                                         fontSize: 13.0, // Smaller font size
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
+                                        color:
+                                            Colors.white70, // Light gray text
                                       ),
                                     ),
                                     const SizedBox(height: 6.0),
                                     Text(
                                       patient['patientName']!,
-                                      style: TextStyle(
-                                        fontSize: 14.0, // Smaller font size
+                                      style: const TextStyle(
+                                        fontSize: 14.0,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF1C110A),
+                                        color: Colors.white, // White text
                                       ),
                                     ),
                                     const SizedBox(height: 12.0),
-                                    Text(
+                                    const Text(
                                       'Appointment Number:',
                                       style: TextStyle(
                                         fontSize: 13.0, // Smaller font size
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
+                                        color:
+                                            Colors.white70, // Light gray text
                                       ),
                                     ),
                                     const SizedBox(height: 6.0),
                                     Text(
                                       patient['appointmentNumber']!,
-                                      style: TextStyle(
-                                        fontSize: 14.0, // Smaller font size
+                                      style: const TextStyle(
+                                        fontSize: 14.0,
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF1C110A),
+                                        color: Colors.white, // White text
                                       ),
                                     ),
                                   ],
@@ -132,13 +143,14 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                                   onPressed: () {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content: Text('Download started')),
+                                        content: Text('Download started'),
+                                      ),
                                     );
                                   },
                                   icon: const Icon(Icons.download,
                                       size: 36.0), // Bigger icon size
                                   color: const Color(
-                                      0xFF5AA9E6), // Change the color of the icon
+                                      0xFF8AC4FF), // Blue icon color for consistency
                                 ),
                               ],
                             ),
@@ -152,7 +164,8 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                                         patient['diagnosisSummary']!,
                                         style: const TextStyle(
                                           fontSize: 14.0,
-                                          color: Colors.black87,
+                                          color:
+                                              Colors.white70, // Light gray text
                                         ),
                                       ),
                                     )
@@ -180,7 +193,8 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                     Navigator.of(context).pushNamed(AudioRecorderPage.tag);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C110A),
+                    backgroundColor:
+                        const Color(0xFF8AC4FF), // Light blue button
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -188,7 +202,9 @@ class _RecordViewState extends State<RecordView> with TickerProviderStateMixin {
                   child: const Text(
                     "Record",
                     style: TextStyle(
-                        color: Colors.white), // White text for contrast
+                      color: Colors.white, // White text for contrast
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
