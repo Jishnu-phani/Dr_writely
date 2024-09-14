@@ -34,6 +34,10 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   bool isPlaying = false;
   String recordedFilePath = '';
 
+  // Add a TextEditingController to manage the input for the user's name
+  TextEditingController _nameController = TextEditingController();
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +48,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   void dispose() {
     _recorder?.closeRecorder();
     _player?.closePlayer();
+    _nameController.dispose(); // Don't forget to dispose of the controller
     super.dispose();
   }
 
@@ -63,6 +68,13 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
   }
 
   Future<void> startRecording() async {
+    if (userName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter patient name before recording')),
+      );
+      return;
+    }
+
     try {
       recordedFilePath = '${Directory.systemTemp.path}/audio_record.wav';
       await _recorder!.startRecorder(
@@ -152,7 +164,7 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
       if (await file.exists()) {
         await file.delete();
         setState(() {
-          recordedFilePath = '';
+          recordedFilePath = ''; // Reset the file path
           isPlaying = false; // Stop any ongoing playback
         });
         ScaffoldMessenger.of(context).showSnackBar(
@@ -173,36 +185,54 @@ class _AudioRecorderPageState extends State<AudioRecorderPage> {
         title: Text('Audio Recorder'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: isRecording ? stopRecording : startRecording,
-              child: Text(isRecording ? 'Stop Recording' : 'Start Recording'),
-            ),
-            ElevatedButton(
-              onPressed: isPlaying ? null : playAudio,
-              child: Text('Play Audio'),
-            ),
-            ElevatedButton(
-              onPressed: recordedFilePath.isNotEmpty ? sendFile : null,
-              child: Text('Send to Server'),
-            ),
-            ElevatedButton(
-              onPressed: recordedFilePath.isNotEmpty ? deleteFile : null,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red), // Red button for delete
-              child: Text('Delete Recording'),
-            ),
-            SizedBox(height: 20),
-            if (isRecording) ...[
-              CircularProgressIndicator(),
-              SizedBox(height: 10),
-              Text('Recording in progress...'),
-            ] else if (recordedFilePath.isNotEmpty) ...[
-              Text('Recording complete. Ready to send or delete.'),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Enter patient name',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      userName = value;
+                    });
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: isRecording ? stopRecording : startRecording,
+                child: Text(isRecording ? 'Stop Recording' : 'Start Recording'),
+              ),
+              ElevatedButton(
+                onPressed: isPlaying ? null : playAudio,
+                child: Text('Play Audio'),
+              ),
+              ElevatedButton(
+                onPressed: recordedFilePath.isNotEmpty ? sendFile : null,
+                child: Text('Send to Server'),
+              ),
+              ElevatedButton(
+                onPressed: recordedFilePath.isNotEmpty ? deleteFile : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                child: Text('Delete Recording'),
+              ),
+              SizedBox(height: 20),
+              if (isRecording) ...[
+                CircularProgressIndicator(),
+                SizedBox(height: 10),
+                Text('Recording in progress...'),
+              ] else if (recordedFilePath.isNotEmpty) ...[
+                Text('Recording complete. Ready to send or delete.'),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
